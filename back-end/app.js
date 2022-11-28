@@ -1,6 +1,6 @@
 import cors from "cors";
 import express, { json } from "express";
-import router from "./routes/index.js";
+import router from "./src/routes/index.js";
 
 class App {
   constructor(port) {
