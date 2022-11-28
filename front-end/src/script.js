@@ -26,58 +26,59 @@ class Auth {
   }
 }
 
-function loadTweets() {
-  axios.get("http://localhost:5001/tweets").then((res) => {
-    const tweets = res.data;
-    let tweetsHtml = "";
+class Tweet {
+  getTweets() {
+    axios.get("http://localhost:5000/tweets").then((response) => {
+      const tweets = response.data;
+      let tweetsHtml = "";
 
-    for (const tweet of tweets) {
-      tweetsHtml += `
+      tweets.forEach((tweet) => {
+        tweetsHtml += `
         <div class="tweet">
-          <div class="avatar">
+          <div class="tweet-header">
             <img src="${tweet.avatar}" />
+            <div class="tweet-header-info">
+              <h3>${tweet.username}</h3>
+              <h4>${tweet.date}</h4>
+            </div>
           </div>
-          <div class="content">
-            <div class="user">
-              @${tweet.username}
-            </div>
-            <div class="body">
-              ${escapeHtml(tweet.tweet)}
-            </div>
+          <div class="tweet-content">
+            <p>${tweet.content}</p>
           </div>
         </div>
       `;
-    }
+      });
 
-    document.querySelector(".tweets").innerHTML = tweetsHtml;
-    document.querySelector(".pagina-inicial").classList.add("hidden");
-    document.querySelector(".tweets-page").classList.remove("hidden");
-  });
-}
-
-function postTweet() {
-  const tweet = document.querySelector("#tweet").value;
-
-  axios
-    .post("http://localhost:5001/tweets", {
-      username: _username,
-      tweet,
-    })
-    .then(() => {
-      document.querySelector("#tweet").value = "";
-      loadTweets();
-    })
-    .catch((err) => {
-      console.error(err);
-      alert("Erro ao fazer tweet! Consulte os logs.");
+      document.querySelector("#tweets").innerHTML = tweetsHtml;
+      document.querySelector(".pagina-inicial").classList.add("hidden");
+      document.querySelector(".tweets-page").classList.remove("hidden");
     });
-}
+  }
 
-function escapeHtml(unsafe) {
-  return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  postTweet() {
+    const tweet = document.querySelector("#tweet").value;
+
+    axios
+      .post("http://localhost:5000/tweets", {
+        username: _username,
+        tweet,
+      })
+      .then(() => {
+        document.querySelector("#tweet").value = "";
+        this.getTweets();
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Erro ao fazer post! Consulte os logs.");
+      });
+  }
+
+  escapeHtml(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 }
