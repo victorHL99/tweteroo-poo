@@ -1,22 +1,29 @@
 let _username = "";
 
-function signUp() {
-  const username = document.querySelector("#username").value;
-  const picture = document.querySelector("#picture").value;
+class Auth {
+  username;
+  picture;
 
-  axios
-    .post("http://localhost:5001/sign-up", {
-      username,
-      avatar: picture,
-    })
-    .then(() => {
-      _username = username;
-      loadTweets();
-    })
-    .catch((err) => {
-      console.error(err);
-      alert("Erro ao fazer cadastro! Consulte os logs.");
-    });
+  constructor() {
+    this.username = document.querySelector("#username").value;
+    this.picture = document.querySelector("#picture").value;
+  }
+
+  signUp() {
+    axios
+      .post("http://localhost:5001/sign-up", {
+        username: this.username,
+        avatar: this.picture,
+      })
+      .then(() => {
+        _username = this.username;
+        new Tweet().getTweets();
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Erro ao fazer cadastro! Consulte os logs.");
+      });
+  }
 }
 
 function loadTweets() {
